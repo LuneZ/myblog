@@ -8,9 +8,11 @@ import com.sc2cs.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
-@Service
+@Service(value = "ArticleService")
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleDao articleDao;
@@ -31,7 +33,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * 根据类别和分页信息获取
+     * 根据类别和分页信息获取文章列表
      * @param typeId
      * @return
      */
@@ -39,6 +41,10 @@ public class ArticleServiceImpl implements ArticleService {
     public PageInfo<Article> getArticlesByTypeAndPage(Integer typeId, Integer currentPage, Integer pageSize) {
         PageHelper.startPage(currentPage, pageSize);
         List<Article> list = articleDao.findArticlesByType(typeId);
+        for(Article article:list){
+            article.setCreateTime(new Timestamp(article.getCreateTime().getTime()));
+            article.setLastModifyTime(new Timestamp(article.getLastModifyTime().getTime()));
+        }
         return new PageInfo<>(list);
     }
 }
